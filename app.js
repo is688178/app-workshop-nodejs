@@ -7,6 +7,7 @@ require('dotenv').config()
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const app = express();
+const port = process.env.port || 3000;
 app.use(cookieParser());
 
 var key = process.env.PRIVATE_KEY;
@@ -103,7 +104,7 @@ https.createServer({
     key: fs.readFileSync('server.key'),
     cert: fs.readFileSync('server.cert')
 }, app)
-    .listen(3000, function () {
+    .listen(port, function () {
         console.log('Simple workshop running on port 3000! Go to https://localhost:3000/')
     });
 
