@@ -1,13 +1,12 @@
-var port = process.env.PORT || 3000,
-    http = require('http'),
-    fs = require('fs'),
-    html = fs.readFileSync('success.html');
 const express = require("express");
 const admin = require("firebase-admin");
 const cookieParser = require("cookie-parser");
+const https = require('https');
+const fs = require('fs');
 require('dotenv').config()
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const port = process.env.port || 3000;
+var port = process.env.port || 3000;
+
 const app = express();
 app.use(cookieParser());
 
@@ -23,7 +22,8 @@ admin.initializeApp({
 });
 
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/success.html');  //You can use render in case of ejs 
+
+    res.sendFile(__dirname + '/login.html');  //You can use render in case of ejs 
 });
 
 app.get('/logout', (req, res) => {
@@ -31,63 +31,80 @@ app.get('/logout', (req, res) => {
     res.redirect('/');
 });
 
-app.get('/success', (req, res) => {
+app.get('/success', checkCookie, (req, res) => {
     res.sendFile(__dirname + '/success.html');
+    console.log("UID of Signed in User is: " + req.decodedClaims.uid);
+    //You will reach here only if session is working Fine
 });
 
-app.get('/spare_parts', (req, res) => {
+app.get('/spare_parts', checkCookie, (req, res) => {
     res.sendFile(__dirname + '/spare_parts.html');
+    console.log("UID of Signed in User is: " + req.decodedClaims.uid);
+    //You will reach here only if session is working Fine
 });
 
-app.get('/create_cone', (req, res) => {
+app.get('/create_cone', checkCookie, (req, res) => {
     res.sendFile(__dirname + '/create_cone.html');
+    console.log("UID of Signed in User is: " + req.decodedClaims.uid);
+    //You will reach here only if session is working Fine
 });
 
-app.get('/create_sp', (req, res) => {
+app.get('/create_sp', checkCookie, (req, res) => {
     res.sendFile(__dirname + '/create_sp.html');
+    console.log("UID of Signed in User is: " + req.decodedClaims.uid);
+    //You will reach here only if session is working Fine
 });
 
-var log = function(entry) {
-    fs.appendFileSync('/tmp/sample-app.log', new Date().toISOString() + ' - ' + entry + '\n');
-};
-
-var server = http.createServer(function (req, res) {
-    if (req.method === 'POST') {
-        var body = '';
-
-        req.on('data', function(chunk) {
-            body += chunk;
-        });
-
-        req.on('end', function() {
-            if (req.url === '/') {
-                log('Received message: ' + body);
-            } else if (req.url = '/scheduled') {
-                log('Received task ' + req.headers['x-aws-sqsd-taskname'] + ' scheduled at ' + req.headers['x-aws-sqsd-scheduled-at']);
-            }
-
-            res.writeHead(200, 'OK', {'Content-Type': 'text/plain'});
-            res.end();
-        });
-    } else {
-        res.writeHead(200);
-        res.write(html);
-        res.end();
-    }
+app.get('/savecookie', (req, res) => {
+    const Idtoken = req.query.idToken;
+    console.log("Idtoken of Signed in User is: " + Idtoken);
+    savecookie(Idtoken, res);
 });
+
+//saving cookies and verify cookies
+// Reference : https://firebase.google.com/docs/auth/admin/manage-cookies
+
+function savecookie(idtoken, res) {
+
+    const expiresIn = 60 * 60 * 24 * 5 * 1000;
+    admin.auth().createSessionCookie(idtoken, { expiresIn })
+        .then((sessionCookie) => {
+            const options = { maxAge: expiresIn, httpOnly: true, secure: true };
+            res.cookie('__session', sessionCookie, options);
+
+            admin.auth().verifyIdToken(idtoken).then(function (decodedClaims) {
+                res.redirect('/success');
+            });
+
+        }, error => {
+            console.log(error);
+            res.status(401).send("UnAuthorised Request");
+
+        });
+}
+
+
+function checkCookie(req, res, next) {
+
+
+    const sessionCookie = req.cookies.__session || '';
+    admin.auth().verifySessionCookie(
+        sessionCookie, true).then((decodedClaims) => {
+            req.decodedClaims = decodedClaims;
+            next();
+        })
+        .catch(error => {
+            // Session cookie is unavailable or invalid. Force user to login.
+            res.redirect('/login');
+        });
+
+}
 
 https.createServer({
     key: fs.readFileSync('server.key'),
     cert: fs.readFileSync('server.cert')
 }, app)
     .listen(port, function () {
-        console.log('Simple workshop running on port ', port, '! Go to https://localhost:',port,'/')
+        console.log('Simple workshop running on port 3000! Go to https://localhost:3000/')
     });
 
-// Listen on port 3000, IP defaults to 127.0.0.1
-server.listen(port);
-
-// Put a friendly message on the terminal
-console.log('Server running at http://127.0.0.1:' + port + '/');
-
-module.exports = app;
