@@ -7,7 +7,7 @@ const admin = require("firebase-admin");
 const cookieParser = require("cookie-parser");
 require('dotenv').config()
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-
+const port = process.env.port || 3000;
 const app = express();
 app.use(cookieParser());
 
@@ -76,6 +76,14 @@ var server = http.createServer(function (req, res) {
     }
 });
 
+https.createServer({
+    key: fs.readFileSync('server.key'),
+    cert: fs.readFileSync('server.cert')
+}, app)
+    .listen(port, function () {
+        console.log('Simple workshop running on port ', port, '! Go to https://localhost:',port,'/')
+    });
+
 // Listen on port 3000, IP defaults to 127.0.0.1
 server.listen(port);
 
@@ -83,5 +91,3 @@ server.listen(port);
 console.log('Server running at http://127.0.0.1:' + port + '/');
 
 module.exports = app;
-
-
