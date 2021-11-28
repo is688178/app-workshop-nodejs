@@ -1,0 +1,201 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+<style>
+    th{ 
+        color:#fff;
+    }
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: #212331;
+    }
+</style>
+
+<div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Reporte de refacciones</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item active">
+              <a class="nav-link" href="/success">Expedientes<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/create_cone">Crear-Editar expediente</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/create_sp">Crear-Editar refacciones</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/logout">Salir del sistema</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+</div>
+
+<div class="row">
+    <div class="col">
+        <div class="card card-body">
+            <input id="search-input" class="form-control" type="text">
+        </div>
+    </div>
+</div>
+
+<table class="table table-striped table-dark">
+    <tr  class="bg-secondary">
+        <th data-column="cone" data-order="desc">Expediente &#9650</th>
+        <th data-column="description" data-order="desc">Descripción &#9650</th>
+        <th data-column="priority" data-order="desc">Prioridad &#9650</th>
+        <th data-column="quantity" data-order="desc">Cantidad &#9650</th>
+        <th data-column="status" data-order="desc">Estatus &#9650</th>
+        <th data-column="supplier" data-order="desc">Proveedor &#9650</th>            
+    </tr>
+
+    <tbody id="myTableSP">
+        
+    </tbody>
+</table>
+
+<script>
+	var myArray = []
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    console.log(queryString)
+    if(urlParams.has('id')){
+        const urlParamId = urlParams.get('id')
+        $.ajax({
+            method: 'GET',
+            url: 'https://us-central1-workshop-688178.cloudfunctions.net/app/api/read_spare_parts',
+            success: function(response){
+                myArray = response
+                var data = searchTable(urlParamId, myArray)
+                buildTable(data)
+            }
+        })
+    } else {
+        $.ajax({
+            method: 'GET',
+            url: 'https://us-central1-workshop-688178.cloudfunctions.net/app/api/read_spare_parts',
+            success: function(response){
+                myArray = response
+                buildTable(myArray)
+            }
+        })
+    }
+
+    $('th').on('click', function(){
+        var column = $(this).data('column')
+        var order = $(this).data('order')
+        var text = $(this).html()
+        text = text.substring(0, text.length -1)
+        console.log(column, order, text)
+
+        if(order == 'desc'){
+            $(this).data('order', "asc")
+            myArray = myArray.sort((a,b) => a.spare_part[column] > b.spare_part[column] ? 1 : -1)
+            text += '&#9660'
+        }else{
+            $(this).data('order', "desc")
+            myArray = myArray.sort((a,b) => a.spare_part[column] < b.spare_part[column] ? 1 : -1)
+            text += '&#9650'
+        }
+
+        $(this).html(text)
+        buildTable(myArray)
+    })
+
+    $('#search-input').on('keyup', function(){
+        var value = $(this).val()
+
+        $.ajax({
+            method: 'GET',
+            url: 'https://us-central1-workshop-688178.cloudfunctions.net/app/api/read_spare_parts',
+            success: function(response){
+                myArray = response
+            }
+        })
+
+        var data = searchTable(value, myArray)
+        buildTable(data)
+    })
+
+    function searchTable(value, data){
+        var filteredData= []
+        for (var i = 0; i < data.length; i++){
+            value = value.toLowerCase()
+            var cone = data[i].spare_part.cone.toLowerCase()
+            var description = data[i].spare_part.description.toLowerCase()
+            var priority = data[i].spare_part.priority.toLowerCase()
+            var quantity = data[i].spare_part.quantity.toString()
+            var status = data[i].spare_part.status.toLowerCase()
+            var supplier = data[i].spare_part.supplier.toLowerCase()
+
+            if(cone.includes(value)
+            || description.includes(value)
+            || priority.includes(value)
+            || quantity.includes(value)
+            || status.includes(value)
+            || supplier.includes(value)
+            ){
+                filteredData.push(data[i])
+            }
+
+        }
+
+        return filteredData
+    }
+
+	function buildTable(data){
+		var table = document.getElementById('myTableSP')
+
+        table.innerHTML = ''
+
+		for (var i = 0; i < data.length; i++){
+			var row = `<tr>
+                        <td><a href="/create_sp?id=${data[i].id}">${data[i].spare_part.cone.toUpperCase()}</a></td> 
+                        <td>${data[i].spare_part.description.toUpperCase()}</td> 
+                        <td>${data[i].spare_part.priority.toUpperCase()}</td> 
+                        <td>${data[i].spare_part.quantity}</td> 
+                        <td>${data[i].spare_part.status.toUpperCase()}</td> 
+                        <td>${data[i].spare_part.supplier.toUpperCase()}</td> 
+					  </tr>`
+			table.innerHTML += row
+		}
+        parseColorCells(table)
+	}
+
+    function parseColorCells(theTable){
+        // First loop the table rows.
+        for(let r = 0, l = theTable.rows.length; r < l; r++) {
+            // Second loop the rows column cells.
+            for(let c = 0, e = theTable.rows[r].cells.length; c < e; c++) {
+            try {
+                // Get the contents and convert to number from string and set the current cell.      
+                let currentCellString = theTable.rows[r].cells[c].innerHTML.toString().toLowerCase();
+                let currentCell = theTable.rows[r].cells[c];
+                
+                // If the contents are special Strings then change colors.
+                if (currentCellString.includes("surt") || currentCellString.includes("entr")) {
+                currentCell.style.backgroundColor = 'DarkGreen';
+                } else if (currentCellString.includes("cot") || currentCellString.includes("comp")) {
+                currentCell.style.backgroundColor = 'DarkGoldenRod';
+                } else if (currentCellString.includes("soli") || currentCellString.includes("ped")){
+                currentCell.style.backgroundColor = 'DarkRed';
+                }
+            }
+            // If there was error like cell contents aren't actually numbers, or table wasn't found etc, then alert via try/catch.
+            catch {
+                alert('Something is wrong with the input, are you sure your table cells only have numbers?')
+                }
+            }
+        }
+    }
+
+</script>

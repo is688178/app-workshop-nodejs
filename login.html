@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<style>
+    th{ 
+        color:#fff;
+    }
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: #212331;
+    }
+</style>
+<head>
+    <meta charset="UTF-8">
+     <!-- Firebase Package-->
+     <script src="https://www.gstatic.com/firebasejs/5.8.5/firebase.js"></script>
+
+     <!-- Loads the login UI elements-->
+     <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
+     <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
+ 
+  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signin</title>
+
+    <style>
+        .banner{
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        .slider{
+            width: 100%;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+        }
+        #slideImg{
+            width: 100%;
+            height: 100%;
+            animation: zoom 3s linear infinite;
+        }
+        @keyframes zoom{
+            0%{
+                transform: scale(1.5);
+            }
+            15%{
+                transform: scale(1);
+            }
+            85%{
+                transform: scale(1);
+            }
+            100%{
+                transform: scale(1.5);
+            }
+        }
+        .overlay{
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7));
+            position: absolute;
+            top: 0;
+        }
+        .content{
+            width: 60%;
+            margin: 160px auto 0;
+            text-align: center;
+            color: #fff;
+        }
+    </style>
+
+</head>
+<body onload="slider()">
+    <div class="banner">
+        <div class="slider">
+            <img src="https://proyectotaller.s3.amazonaws.com/S3/taller-1.jpg" id="slideImg">
+        </div>
+        <div class="overlay"></div>
+        <div class="content">
+            <h1 style="text-align: center;" >Bienvenido al sistema del Taller</h1>
+            <div id="firebaseui-auth-container"></div>
+        </div>
+    </div>
+
+<script>
+var slideImg = document.getElementById("slideImg");
+var images = new Array(
+    "https://proyectotaller.s3.amazonaws.com/S3/taller-1.jpg",
+    "https://proyectotaller.s3.amazonaws.com/S3/coche-4-car.jpg",
+    "https://proyectotaller.s3.amazonaws.com/S3/tractocamion-1-truck.jpg",
+    "https://proyectotaller.s3.amazonaws.com/S3/taller-3.jpg"
+);
+
+var len = images.length;
+var i = 0;
+
+function slider(){
+    if(i > len-1){
+        i = 0;
+    }
+    slideImg.src = images[i];
+    i++;
+    setTimeout('slider()', 3000);
+}
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAd4IclPZmCiZYUBNxxAUjwGdiHHe6WFlk",
+  authDomain: "api-workshop-688178.firebaseapp.com",
+  projectId: "api-workshop-688178",
+  storageBucket: "api-workshop-688178.appspot.com",
+  messagingSenderId: "114135673938",
+  appId: "1:114135673938:web:9df9ff131f13f56175838b",
+  measurementId: "G-YCRWD016QY"
+};
+firebase.initializeApp(firebaseConfig);
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE);
+
+// FirebaseUI config.
+var uiConfig = {
+    signInOptions: [
+        // EMAIL-PASSWORD sign in option
+        firebase.auth.EmailAuthProvider.PROVIDER_ID,
+    ],
+
+    // Terms of service url/callback.
+    tosUrl: '<your-tos-url>',
+    // Privacy policy url/callback.
+    privacyPolicyUrl: function() {
+        window.location.assign('<your-privacy-policy-url>');
+    },
+
+    callbacks: {
+        signInSuccess: function(user, credential, redirectUrl) {
+            // User successfully signed in.
+
+            user.getIdToken().then(function(idToken) {
+                // document.cookie = "__session=idToken"
+                window.location.href = '/savecookie?idToken=' + idToken;
+            }).catch(error => {
+                console.log(error);
+            }) ;
+
+        }
+    }
+};
+// Initialize the FirebaseUI Widget using Firebase.
+var ui = new firebaseui.auth.AuthUI(firebase.auth());
+
+// The start method will wait until the DOM is loaded.
+ui.start('#firebaseui-auth-container', uiConfig);
+</script>
+</body>
+</html>

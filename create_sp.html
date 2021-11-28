@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Create_Cone</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+    </head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <style>
+        th{ 
+            color:#fff;
+        }
+        label, td{
+            width:200px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+        p.ex1 {
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #212331;
+        }
+    </style>
+
+    <div>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="#">Crear-Editar refacciones</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                <a class="nav-link" href="/success">Expedientes<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/create_cone">Crear-Editar expediente</a>
+                  </li>
+                <li class="nav-item">
+                <a class="nav-link" href="/spare_parts">Refacciones</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" href="/logout">Salir del sistema</a>
+                </li>
+            </ul>
+            </div>
+        </nav>
+    </div>
+
+    <form id="cone_form">
+        <table class="table table-dark">
+        <tr>
+            <td>
+                <label>Expediente</label>
+                <input type="text" name="cone" id="cone">
+            </td>
+        </tr>
+        </table>
+        <table class="table table-secondary">
+            <tr>
+                <td>
+                    <label>Proveedor</label>
+                    <input class="form-control" type="text" name="supplier" id="supplier">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Descripción</label>
+                    <input class="form-control" type="text" name="description" id="description">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Prioridad</label>
+                    <input class="form-control" type="text" name="priority" id="priority">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Cantidad</label>
+                    <input class="form-control" type="number" name="quantity" id="quantity">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Estatus</label>
+                    <input class="form-control" type="text" name="status" id="status">
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    <div>
+        <p class="ex1"> 
+            <button  id="postButton" class="btn btn-primary btn-block" type="submit">
+                Crear refacciones
+            </button>
+
+            <button  id="putButton" class="btn btn-secondary btn-block" type="submit">
+                Actualizar refacciones
+            </button>
+        </p>
+    </div>
+
+    <script>
+    	var myArray = []
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        console.log(queryString)
+        if(urlParams.has('id')){
+            const urlParamId = urlParams.get('id')
+            console.log(urlParamId)
+            $.ajax({
+                method: 'GET',
+                url: 'https://us-central1-workshop-688178.cloudfunctions.net/app/api/read_sp/'+urlParamId,
+                success: function(response){
+                    myArray = response
+                    buildTable(myArray)
+                    console.log(myArray)
+                }
+            })
+        }
+
+        function buildTable(data){
+            document.getElementById('cone').value = data.cone
+            document.getElementById('description').value = data.description
+            document.getElementById('priority').value = data.priority
+            document.getElementById('quantity').value = data.quantity
+            document.getElementById('status').value = data.status
+            document.getElementById('supplier').value = data.supplier
+        }
+
+        $('#postButton').on('click', function() {
+            console.log('postButton...') 
+            var cone = document.getElementById('cone').value
+            var description = document.getElementById('description').value
+            var priority = document.getElementById('priority').value
+            var quantity = document.getElementById('quantity').value
+            var status = document.getElementById('status').value
+            var supplier = document.getElementById('supplier').value
+            
+            var jsonData = {
+                spare_part:{
+                    cone: cone,
+                    description: description,
+                    priority: priority,
+                    quantity: quantity,
+                    status: status,
+                    supplier: supplier
+                }
+            }
+
+            console.log('jsonData', jsonData)
+
+            if(jsonData.spare_part.cone == ""){
+                swal({
+                                title: "Error",
+                                text: "Las refacciones no han sido creadas. ¿Incluiste el ID del expediente?",
+                                icon: "warning",
+                                button: "Continuar",
+                            });
+            }else{
+                $.ajax({
+                //method: 'POST',
+                url: 'https://us-central1-workshop-688178.cloudfunctions.net/app/api/create_spare_part',
+                type: 'POST',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(jsonData),
+                    statusCode: {
+                        200: function() {
+                            swal({
+                                title: "Correcto",
+                                text: "Refacciones creadas.",
+                                icon: "success",
+                                button: "Continuar",
+                            });
+                        },
+                        500: function() {
+                            swal({
+                                title: "Error",
+                                text: "Las refacciones no han sido creadas. ¿Incluiste el ID del expediente?",
+                                icon: "warning",
+                                button: "Continuar",
+                            });
+                        },
+                        default: function() {
+                            swal({
+                                title: "Error",
+                                text: "Las refacciones no han sido creadas. ¿Incluiste el ID del expediente?",
+                                icon: "warning",
+                                button: "Continuar",
+                            });
+                        }
+                    }
+                })
+            }
+
+
+        })
+
+        $('#putButton').on('click', function() {
+            console.log('putButton...') 
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const urlParamId = urlParams.get('id')
+            console.log(urlParamId)
+            var cone = document.getElementById('cone').value  
+            var description = document.getElementById('description').value
+            var priority = document.getElementById('priority').value
+            var quantity = document.getElementById('quantity').value
+            var status = document.getElementById('status').value
+            var supplier = document.getElementById('supplier').value
+            
+            var jsonData = {
+                spare_part:{
+                    cone: cone,
+                    description: description,
+                    priority: priority,
+                    quantity: quantity,
+                    status: status,
+                    supplier: supplier
+                }
+            }
+
+            console.log('jsonData', jsonData)
+
+            if(jsonData.spare_part.cone == ""){
+                swal({
+                                title: "Error",
+                                text: "Las refacciones no han sido actualizadas. ¿Incluiste el ID del expediente y seleccionaste una del listado?",
+                                icon: "warning",
+                                button: "Continuar",
+                            });
+            }else{
+                $.ajax({
+                //method: 'UPDATE',
+                url: 'https://us-central1-workshop-688178.cloudfunctions.net/app/api/update_sp/'+urlParamId,
+                type: 'PUT',
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(jsonData),
+            statusCode: {
+                200: function() {
+                    swal({
+                        title: "Correcto",
+                        text: "Refacciones actualizadas.",
+                        icon: "success",
+                        button: "Continuar",
+                    });
+                },
+                404: function() {
+                    swal({
+                        title: "Error",
+                        text: "Las refacciones no han sido actualizadas. ¿Incluiste el ID del expediente y seleccionaste una del listado?",
+                        icon: "warning",
+                        button: "Continuar",
+                    });
+                },
+                500: function() {
+                    swal({
+                        title: "Error",
+                        text: "Las refacciones no han sido actualizadas. ¿Incluiste el ID del expediente y seleccionaste una del listado?",
+                        icon: "warning",
+                        button: "Continuar",
+                    });
+                },
+                default: function() {
+                    swal({
+                        title: "Error",
+                        text: "Las refacciones no han sido actualizadas. ¿Incluiste el ID del expediente y seleccionaste una del listado?",
+                        icon: "warning",
+                        button: "Continuar",
+                    });
+                }
+            }
+            })
+            }  
+        })
+        
+
+
+    </script>
+</html>

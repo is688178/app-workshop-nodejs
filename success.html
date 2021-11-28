@@ -1,0 +1,224 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+<style>
+    th{ 
+        color:#fff;
+    }
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: #212331;
+    }
+</style>
+
+<div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Expedientes</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item active">
+              <a class="nav-link" href="/create_cone">Crear-Editar expediente<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/spare_parts">Refacciones</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/create_sp">Crear-Editar refacciones</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/logout">Salir del sistema</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+</div>
+
+<div class="row">
+    <div class="col">
+        <div class="card card-body">
+            <input id="search-input" class="form-control" type="text">
+        </div>
+    </div>
+</div>
+
+<table class="table table-striped table-dark">
+    <tr  class="bg-primary bg-gradient">
+        <th data-column="id" data-order="desc">Expediente &#9650</th>
+        <th data-column="id" data-order="desc">Estatus &#9650</th>
+        <th data-column="customer" data-order="desc">Cliente &#9650</th>
+        <th data-column="brand" data-order="desc">Marca &#9650</th>
+        <th data-column="color" data-order="desc">Color &#9650</th>
+        <th data-column="model" data-order="desc">Modelo &#9650</th>
+        <th data-column="year" data-order="desc">Año &#9650</th>
+        <th data-column="entrydate" data-order="desc">Fecha de Ingreso &#9650</th>
+        <th data-column="commitmentdate" data-order="desc">Fecha Promesa &#9650</th>
+        <th data-column="email" data-order="desc">E-mail &#9650</th>
+        <th data-column="phone" data-order="desc">Teléfono &#9650</th>
+        <th>Refacciones</th>        
+    </tr>
+
+    <tbody id="myTable">
+        
+    </tbody>
+</table>
+
+<script>
+	var myArray = []
+    $.ajax({
+        method: 'GET',
+        url: 'https://us-central1-workshop-688178.cloudfunctions.net/app/api/read_cones',
+        success: function(response){
+            myArray = response
+            buildTable(myArray)
+        }
+    })
+
+    $('th').on('click', function(){
+        var column = $(this).data('column')
+        var order = $(this).data('order')
+        var text = $(this).html()
+        text = text.substring(0, text.length -1)
+        console.log(column, order, text)
+        console.log(myArray)
+
+        if(column == 'id'){
+            if(order == 'desc'){
+                $(this).data('order', "asc")
+                myArray = myArray.sort((a,b) => a[column] > b[column] ? 1 : -1)
+                text += '&#9660'
+            }else{
+                $(this).data('order', "desc")
+                myArray = myArray.sort((a,b) => a[column] < b[column] ? 1 : -1)
+                text += '&#9650'
+            }
+        }else {
+            if(order == 'desc'){
+                $(this).data('order', "asc")
+                myArray = myArray.sort((a,b) => a.cone[column] > b.cone[column] ? 1 : -1)
+                text += '&#9660'
+            }else{
+                $(this).data('order', "desc")
+                myArray = myArray.sort((a,b) => a.cone[column] < b.cone[column] ? 1 : -1)
+                text += '&#9650'
+            }
+        }
+
+
+        $(this).html(text)
+        console.log(myArray)
+        buildTable(myArray)
+    })
+
+    $('#search-input').on('keyup', function(){
+        var value = $(this).val()
+
+        $.ajax({
+            method: 'GET',
+            url: 'https://us-central1-workshop-688178.cloudfunctions.net/app/api/read_cones',
+            success: function(response){
+                myArray = response
+            }
+        })
+
+        var data = searchTable(value, myArray)
+        buildTable(data)
+    })
+
+    function searchTable(value, data){
+        var filteredData= []
+        for (var i = 0; i < data.length; i++){
+            value = value.toLowerCase()
+            var id = data[i].id.toLowerCase()
+            var status = data[i].cone.status.toLowerCase()
+            var customer = data[i].cone.customer.toLowerCase()
+            var brand = data[i].cone.brand.toLowerCase()
+            var color = data[i].cone.color.toLowerCase()
+            var model = data[i].cone.model.toLowerCase()
+            var year = data[i].cone.year.toString().toLowerCase()
+            var commitmentdate = data[i].cone.commitmentdate.toLowerCase()
+            var email = data[i].cone.email.toLowerCase()
+            var entrydate = data[i].cone.entrydate.toLowerCase()
+            var phone = data[i].cone.phone.toLowerCase()
+
+
+            if(id.includes(value)
+            || status.includes(value)
+            || customer.includes(value)
+            || brand.includes(value)
+            || color.includes(value)
+            || model.includes(value)
+            || year.includes(value)
+            || commitmentdate.includes(value)
+            || email.includes(value)
+            || entrydate.includes(value)
+            || phone.includes(value)
+            ){
+                filteredData.push(data[i])
+            }
+
+        }
+
+        return filteredData
+    }
+
+	function buildTable(data){
+		var table = document.getElementById('myTable')
+
+        table.innerHTML = ''
+
+		for (var i = 0; i < data.length; i++){
+			var row = `<tr>
+                        <td><a href="/create_cone?id=${data[i].id}">${data[i].id.toUpperCase()}</a></td>
+                        <td>${data[i].cone.status.toUpperCase()}</td>        
+                        <td>${data[i].cone.customer.toUpperCase()}</td>
+                        <td>${data[i].cone.brand.toUpperCase()}</td>
+                        <td>${data[i].cone.color.toUpperCase()}</td>
+                        <td>${data[i].cone.model.toUpperCase()}</td>
+                        <td>${data[i].cone.year}</td>
+                        <td>${data[i].cone.entrydate}</td>
+                        <td>${data[i].cone.commitmentdate}</td>
+                        <td>${data[i].cone.email.toUpperCase()}</td>                        
+                        <td>${data[i].cone.phone}</td>
+                        <td><a role="button" class="btn btn-primary" href="/spare_parts?id=${data[i].id}">Refacciones</a></td>
+					  </tr>`
+			table.innerHTML += row
+		}
+
+        parseColorCells(table)
+	}
+
+    function parseColorCells(theTable){
+        // First loop the table rows.
+        for(let r = 0, l = theTable.rows.length; r < l; r++) {
+            // Second loop the rows column cells.
+            for(let c = 0, e = theTable.rows[r].cells.length; c < e; c++) {
+            try {
+                // Get the contents and convert to number from string and set the current cell.      
+                let currentCellString = theTable.rows[r].cells[c].innerHTML.toString().toLowerCase();
+                let currentCell = theTable.rows[r].cells[c];
+                
+                // If the contents are special Strings then change colors.
+                if (currentCellString.includes("entregado") || currentCellString.includes("trasladado")) {
+                currentCell.style.backgroundColor = 'DarkGreen';
+                } else if (currentCellString.includes("aceptado") || currentCellString.includes("aprovado")
+                        || currentCellString.includes("autorizado") || currentCellString.includes("repar")) {
+                currentCell.style.backgroundColor = 'DarkGoldenRod';
+                } else if (currentCellString.includes("reclam") || currentCellString.includes("garant")){
+                currentCell.style.backgroundColor = 'DarkRed';
+                }
+            }
+            // If there was error like cell contents aren't actually numbers, or table wasn't found etc, then alert via try/catch.
+            catch {
+                alert('Something is wrong with the input, are you sure your table cells only have numbers?')
+                }
+            }
+        }
+    }
+
+</script>

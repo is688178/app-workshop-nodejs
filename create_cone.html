@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Create_Cone</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+    </head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <style>
+        th{ 
+            color:#fff;
+        }
+        label, td{
+            width:200px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+        p.ex1 {
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #212331;
+        }
+    </style>
+
+    <div>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="#">Crear-Editar expediente</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                <a class="nav-link" href="/success">Expedientes<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" href="/spare_parts">Refacciones</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/create_sp">Crear-Editar refacciones</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" href="/logout">Salir del sistema</a>
+                </li>
+            </ul>
+            </div>
+        </nav>
+    </div>
+
+    <form id="cone_form">
+        <table class="table table-dark">
+        <tr>
+            <td>
+                <label>Expediente</label>
+                <input type="text" name="id" id="id">
+            </td>
+        </tr>
+        </table>
+        <table class="table table-secondary">
+            <tr>
+                <td>
+                    <label>Aseguradora</label>
+                    <input type="text" name="insurer" id="insurer">
+                </td>
+                <td>
+                    <label>Familia</label>
+                    <input type="text" name="family" id="family">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Marca</label>
+                    <input type="text" name="brand" id="brand">
+                </td>
+                <td>
+                    <label>Color</label>
+                    <input type="text" name="color" id="color">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label># Reporte</label>
+                    <input type="text" name="report" id="report">
+                </td>
+                <td>
+                    <label># Póliza</label>
+                    <input type="text" name="policy" id="policy">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Fecha de Ingreso</label>
+                    <input type="text" name="entrydate" id="entrydate">
+                </td>
+                <td>
+                    <label>Fecha Promesa</label>
+                    <input type="text" name="commitmentdate" id="commitmentdate">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Fecha de Entrega</label>
+                    <input type="text" name="egressdate" id="egressdate">
+                </td>
+                <td>
+                    <label># Serie</label>
+                    <input type="text" name="seriesnumber" id="seriesnumber">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label># Económico</label>
+                    <input type="text" name="economicnumber" id="economicnumber">
+                </td>
+                <td>
+                    <label>Modelo</label>
+                    <input type="text" name="model" id="model">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Placa</label>
+                    <input type="text" name="plates" id="plates">
+                </td>
+                <td>
+                    <label>Demérito</label>
+                    <input type="number" name="demerit" id="demerit">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Riesgo</label>
+                    <input type="text" name="risk" id="risk">
+                </td>
+                <td>
+                    <label>Estatus</label>
+                    <input type="text" name="status" id="status">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Deducible Unidad</label>
+                    <input type="number" name="deductibletract" id="deductibletract">
+                </td>
+                <td>
+                    <label>Deducible Adaptación</label>
+                    <input type="number" name="deductibleadapt" id="deductibleadapt">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Grúa</label>
+                    <input type="text" name="crane" id="crane">
+                </td>
+                <td>
+                    <label>Año</label>
+                    <input type="number" name="year" id="year">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Cliente</label>
+                    <input type="text" name="customer" id="customer">
+                </td>
+                <td>
+                    <label>Teléfono</label>
+                    <input type="text" name="phone" id="phone">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>E-mail</label>
+                    <input type="text" name="email" id="email">
+                </td>
+                <td>
+                    <label>Comentarios</label>
+                    <input type="text" name="comment" id="comment">
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    <div>
+        <p class="ex1"> 
+            <button  id="postButton" class="btn btn-primary btn-block" type="submit">
+                Crear expediente
+            </button>
+
+            <button  id="putButton" class="btn btn-secondary btn-block" type="submit">
+                Actualizar expediente
+            </button>
+        </p>
+    </div>
+
+    <script>
+    	var myArray = []
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        console.log(queryString)
+        if(urlParams.has('id')){
+            const urlParamId = urlParams.get('id')
+            document.getElementById('id').value = urlParamId
+            console.log(urlParamId)
+            $.ajax({
+                method: 'GET',
+                url: 'https://us-central1-workshop-688178.cloudfunctions.net/app/api/read_cone/'+urlParamId,
+                success: function(response){
+                    myArray = response
+                    buildTable(myArray)
+                    console.log(myArray)
+                }
+            })
+        }
+
+        function buildTable(data){
+            document.getElementById('brand').value = data.brand
+            document.getElementById('color').value = data.color
+            document.getElementById('comment').value = data.comment
+            document.getElementById('commitmentdate').value = data.commitmentdate
+            document.getElementById('crane').value = data.crane
+            document.getElementById('customer').value = data.customer
+            document.getElementById('deductibleadapt').value = data.deductibleadapt
+            document.getElementById('deductibletract').value = data.deductibletract
+            document.getElementById('demerit').value = data.demerit
+            document.getElementById('economicnumber').value = data.economicnumber
+            document.getElementById('egressdate').value = data.egressdate
+            document.getElementById('email').value = data.email
+            document.getElementById('entrydate').value = data.entrydate
+            document.getElementById('family').value = data.family
+            document.getElementById('insurer').value = data.insurer
+            document.getElementById('model').value = data.model
+            document.getElementById('phone').value = data.phone
+            document.getElementById('plates').value = data.plates
+            document.getElementById('policy').value = data.policy
+            document.getElementById('report').value = data.report
+            document.getElementById('risk').value = data.risk
+            document.getElementById('seriesnumber').value = data.seriesnumber
+            document.getElementById('status').value = data.status
+            document.getElementById('year').value = data.year
+        }
+
+        $('#postButton').on('click', function() {
+            console.log('postButton...')
+            var form = document.getElementById('cone_form')
+            var id = document.getElementById('id').value    
+            var brand = document.getElementById('brand').value
+            var color = document.getElementById('color').value
+            var comment = document.getElementById('comment').value
+            var commitmentdate = document.getElementById('commitmentdate').value
+            var crane = document.getElementById('crane').value
+            var customer = document.getElementById('customer').value
+            var deductibleadapt = document.getElementById('deductibleadapt').value
+            var deductibletract = document.getElementById('deductibletract').value
+            var demerit = document.getElementById('demerit').value
+            var economicnumber = document.getElementById('economicnumber').value
+            var egressdate = document.getElementById('egressdate').value
+            var email = document.getElementById('email').value
+            var entrydate = document.getElementById('entrydate').value
+            var family = document.getElementById('family').value
+            var insurer = document.getElementById('insurer').value
+            var model = document.getElementById('model').value
+            var phone = document.getElementById('phone').value
+            var plates = document.getElementById('plates').value
+            var policy = document.getElementById('policy').value
+            var report = document.getElementById('report').value
+            var risk = document.getElementById('risk').value
+            var seriesnumber = document.getElementById('seriesnumber').value
+            var status = document.getElementById('status').value
+            var year = document.getElementById('year').value
+            
+            var jsonData = {
+                id: id,
+                cone:{
+                    brand: brand,
+                    color: color,
+                    comment: comment,
+                    commitmentdate: commitmentdate,
+                    crane: crane,
+                    customer: customer,
+                    deductibleadapt: deductibleadapt,
+                    deductibletract: deductibletract,
+                    demerit: demerit,
+                    economicnumber: economicnumber,
+                    egressdate: egressdate,
+                    email: email,
+                    entrydate: entrydate,
+                    family: family,
+                    insurer: insurer,
+                    model: model,
+                    phone: phone,
+                    plates: plates,
+                    policy: policy,
+                    report: report,
+                    risk: risk,
+                    seriesnumber: seriesnumber,
+                    status: status,
+                    year: year
+                }
+            }
+
+            console.log('jsonData', jsonData)
+
+                $.ajax({
+                    //method: 'POST',
+                    url: 'https://us-central1-workshop-688178.cloudfunctions.net/app/api/create_cone',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify(jsonData),
+                    statusCode: {
+                        200: function() {
+                            swal({
+                                title: "Correcto",
+                                text: "Expediente creado.",
+                                icon: "success",
+                                button: "Continuar",
+                            });
+                        },
+                        500: function() {
+                            swal({
+                                title: "Error",
+                                text: "El expediente no ha sido creado. ¿Incluiste el ID del expediente?",
+                                icon: "warning",
+                                button: "Continuar",
+                            });
+                        },
+                        default: function() {
+                            swal({
+                                title: "Error",
+                                text: "El expediente no ha sido creado. ¿Incluiste el ID del expediente?",
+                                icon: "warning",
+                                button: "Continuar",
+                            });
+                        }
+                    }
+                })
+
+
+        })
+
+        $('#putButton').on('click', function() {
+            console.log('putButton...')
+            var form = document.getElementById('cone_form')
+            var id = document.getElementById('id').value    
+            var brand = document.getElementById('brand').value
+            var color = document.getElementById('color').value
+            var comment = document.getElementById('comment').value
+            var commitmentdate = document.getElementById('commitmentdate').value
+            var crane = document.getElementById('crane').value
+            var customer = document.getElementById('customer').value
+            var deductibleadapt = document.getElementById('deductibleadapt').value
+            var deductibletract = document.getElementById('deductibletract').value
+            var demerit = document.getElementById('demerit').value
+            var economicnumber = document.getElementById('economicnumber').value
+            var egressdate = document.getElementById('egressdate').value
+            var email = document.getElementById('email').value
+            var entrydate = document.getElementById('entrydate').value
+            var family = document.getElementById('family').value
+            var insurer = document.getElementById('insurer').value
+            var model = document.getElementById('model').value
+            var phone = document.getElementById('phone').value
+            var plates = document.getElementById('plates').value
+            var policy = document.getElementById('policy').value
+            var report = document.getElementById('report').value
+            var risk = document.getElementById('risk').value
+            var seriesnumber = document.getElementById('seriesnumber').value
+            var status = document.getElementById('status').value
+            var year = document.getElementById('year').value
+            
+            var jsonData = {
+                cone:{
+                    brand: brand,
+                    color: color,
+                    comment: comment,
+                    commitmentdate: commitmentdate,
+                    crane: crane,
+                    customer: customer,
+                    deductibleadapt: deductibleadapt,
+                    deductibletract: deductibletract,
+                    demerit: demerit,
+                    economicnumber: economicnumber,
+                    egressdate: egressdate,
+                    email: email,
+                    entrydate: entrydate,
+                    family: family,
+                    insurer: insurer,
+                    model: model,
+                    phone: phone,
+                    plates: plates,
+                    policy: policy,
+                    report: report,
+                    risk: risk,
+                    seriesnumber: seriesnumber,
+                    status: status,
+                    year: year
+                }
+            }
+
+            console.log('jsonData', jsonData)
+
+            var status = $.ajax({
+            //method: 'UPDATE',
+            url: 'https://us-central1-workshop-688178.cloudfunctions.net/app/api/update_cone/'+id,
+            type: 'PUT',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(jsonData),
+            statusCode: {
+                200: function() {
+                    swal({
+                        title: "Correcto",
+                        text: "Expediente actualizado.",
+                        icon: "success",
+                        button: "Continuar",
+                    });
+                },
+                404: function() {
+                    swal({
+                        title: "Error",
+                        text: "El expediente no ha sido actualizado. ¿Incluiste el ID del expediente?",
+                        icon: "warning",
+                        button: "Continuar",
+                    });
+                },
+                500: function() {
+                    swal({
+                        title: "Error",
+                        text: "El expediente no ha sido actualizado. ¿Incluiste el ID del expediente?",
+                        icon: "warning",
+                        button: "Continuar",
+                    });
+                },
+                default: function() {
+                    swal({
+                        title: "Error",
+                        text: "El expediente no ha sido actualizado. ¿Incluiste el ID del expediente?",
+                        icon: "warning",
+                        button: "Continuar",
+                    });
+                }
+            }
+            })
+
+
+        })
+
+
+    </script>
+</html>
