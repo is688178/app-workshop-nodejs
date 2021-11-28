@@ -1,7 +1,7 @@
 var port = process.env.PORT || 3000,
     http = require('http'),
     fs = require('fs'),
-    html = fs.readFileSync('login.html');
+    html = fs.readFileSync('success.html');
 const express = require("express");
 const admin = require("firebase-admin");
 const cookieParser = require("cookie-parser");
