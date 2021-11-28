@@ -2,14 +2,9 @@ var port = process.env.PORT || 3000,
     http = require('http'),
     fs = require('fs'),
     html = fs.readFileSync('success.html');
-const express = require("express");
 const admin = require("firebase-admin");
-const cookieParser = require("cookie-parser");
 require('dotenv').config()
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-
-const app = express();
-app.use(cookieParser());
 
 var key = process.env.PRIVATE_KEY;
 
@@ -20,31 +15,6 @@ admin.initializeApp({
         "client_email": process.env.CLIENT_EMAIL,
         "project_id": process.env.PROJECT_ID
     })
-});
-
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/success.html');  //You can use render in case of ejs 
-});
-
-app.get('/logout', (req, res) => {
-    res.clearCookie('__session');
-    res.redirect('/');
-});
-
-app.get('/success', (req, res) => {
-    res.sendFile(__dirname + '/success.html');
-});
-
-app.get('/spare_parts', (req, res) => {
-    res.sendFile(__dirname + '/spare_parts.html');
-});
-
-app.get('/create_cone', (req, res) => {
-    res.sendFile(__dirname + '/create_cone.html');
-});
-
-app.get('/create_sp', (req, res) => {
-    res.sendFile(__dirname + '/create_sp.html');
 });
 
 var log = function (entry) {
@@ -70,9 +40,29 @@ var server = http.createServer(function (req, res) {
             res.end();
         });
     } else {
-        res.writeHead(200);
-        res.write(html);
-        res.end();
+
+        if (req.url === '/spare_parts') {
+            html = fs.readFileSync('spare_parts.html');
+            res.writeHead(200);
+            res.write(html);
+            res.end();
+        } else if (req.url === '/create_cone') {
+            html = fs.readFileSync('create_cone.html');
+            res.writeHead(200);
+            res.write(html);
+            res.end();
+        } else if (req.url === '/create_sp') {
+            html = fs.readFileSync('create_sp.html');
+            res.writeHead(200);
+            res.write(html);
+            res.end();
+        } else {
+            html = fs.readFileSync('success.html');
+            res.writeHead(200);
+            res.write(html);
+            res.end();
+        }
+
     }
 });
 
@@ -81,7 +71,3 @@ server.listen(port);
 
 // Put a friendly message on the terminal
 console.log('Server running at http://127.0.0.1:' + port + '/');
-
-module.exports = app;
-
-
