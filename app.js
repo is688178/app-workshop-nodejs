@@ -23,7 +23,7 @@ admin.initializeApp({
 });
 
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/login.html');  //You can use render in case of ejs 
+    res.sendFile(__dirname + '/success.html');  //You can use render in case of ejs 
 });
 
 app.get('/logout', (req, res) => {
