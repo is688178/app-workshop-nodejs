@@ -10,7 +10,6 @@ var key = process.env.PRIVATE_KEY;
 
 admin.initializeApp({
     credential: admin.credential.cert({
-
         "private_key": key.replace(/\\n/g, '\n'),
         "client_email": process.env.CLIENT_EMAIL,
         "project_id": process.env.PROJECT_ID
